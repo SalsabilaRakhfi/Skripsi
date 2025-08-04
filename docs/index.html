@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Assistant Chatbot for Academic Experience</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+        
+        .shape:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            top: 60%;
+            right: 10%;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transform: rotate(45deg);
+            animation-delay: -5s;
+        }
+        
+        .shape:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(90deg); }
+            50% { transform: translateY(0px) rotate(180deg); }
+            75% { transform: translateY(20px) rotate(270deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 32px 80px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, 
+                rgba(102, 126, 234, 0.2) 0%, 
+                rgba(118, 75, 162, 0.2) 50%, 
+                rgba(255, 107, 107, 0.2) 100%);
+            backdrop-filter: blur(20px);
+            color: white;
+            padding: 80px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -30%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 8s ease-in-out infinite reverse;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.1; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 0.3; }
+        }
+        
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #667eea 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+        
+        .header h2 {
+            font-size: 1.6rem;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tech-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .content {
+            padding: 60px 60px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+            position: relative;
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -30px;
+            width: calc(100% + 60px);
+            height: calc(100% + 20px);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.02), rgba(255, 107, 107, 0.02));
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .section:hover::before {
+            opacity: 1;
+        }
+        
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.4s; }
+        .section:nth-child(4) { animation-delay: 0.6s; }
+        .section:nth-child(5) { animation-delay: 0.8s; }
+        .section:nth-child(6) { animation-delay: 1s; }
+        .section:nth-child(7) { animation-delay: 1.2s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 35px;
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            border-radius: 3px;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .target-users {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        .user-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(30px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+        
+        .user-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(102, 126, 234, 0.2);
+        }
+        
+        .user-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .user-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .feature-list li {
+            padding: 12px 0;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            padding-left: 35px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-list li:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .feature-list li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #f093fb;
+            font-size: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #f093fb; }
+            to { text-shadow: 0 0 20px #f093fb, 0 0 30px #f093fb; }
+        }
+        
+        .motivation-content {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 5px solid #667eea;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .motivation-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(240, 147, 251, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .motivation-content p {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .tech-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(30px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tech-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .tech-item:hover::before {
+            left: 100%;
+        }
+        
+        .tech-item:hover {
+            transform: translateY(-8px) rotateY(5deg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tech-label {
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        
+        .tech-value {
+            color: #f093fb;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .mvp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .mvp-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(30px);
+            padding: 35px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid;
+            border-image: linear-gradient(90deg, #667eea, #f093fb) 1;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .mvp-card:nth-child(1) { border-image: linear-gradient(90deg, #667eea, #764ba2) 1; }
+        .mvp-card:nth-child(2) { border-image: linear-gradient(90deg, #764ba2, #f093fb) 1; }
+        .mvp-card:nth-child(3) { border-image: linear-gradient(90deg, #f093fb, #ff6b6b) 1; }
+        .mvp-card:nth-child(4) { border-image: linear-gradient(90deg, #ff6b6b, #667eea) 1; }
+        
+        .mvp-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .mvp-title {
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .mvp-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        .challenges-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .challenge-item {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.05));
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            border-left: 5px solid #e74c3c;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .challenge-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 20px 40px rgba(231, 76, 60, 0.2);
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            backdrop-filter: blur(30px);
+            margin: 60px -60px 0;
+            padding: 50px;
+            color: white;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(240, 147, 251, 0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        .stat-item {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, #667eea 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                border-radius: 24px;
+            }
+            
+            .header {
+                padding: 60px 30px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .content {
+                padding: 40px 30px;
+            }
+            
+            .target-users {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                gap: 30px;
+                margin: 60px -30px 0;
+                padding: 40px 30px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Smart Assistant Chatbot</h1>
+            <h2>for Academic & Admission Experience</h2>
+            <div class="tech-badge">Scalable AI Platform for Promed UI with Fast-Knowledge Training Architecture</div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h3 class="section-title">Target Pengguna Utama</h3>
+                <div class="target-users">
+                    <div class="user-card">
+                        <div class="user-title">
+                            <div class="user-icon">🎓</div>
+                            Calon Mahasiswa
+                        </div>
+                        <p>Siswa SMA/SMK sederajat dan gap year yang berencana masuk ke Universitas Indonesia, khususnya jurusan Promed UI. Untuk menjawab pertanyaan repetitif, seperti:</p>
+                        <ul class="feature-list">
+                            <li>Biaya kuliah (UKT, uang pangkal, dan pengembangan)</li>
+                            <li>Gelar dan sertifikasi lulusan</li>
+                            <li>Kurikulum dan mata kuliah</li>
+                            <li>Profil dosen (hook as always, misal Dian Sastro atau Raditya Dika pernah mengajar?)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="user-card">
+                        <div class="user-title">
+                            <div class="user-icon">👨‍🎓</div>
+                            Mahasiswa Aktif (Promates)
+                        </div>
+                        <ul class="feature-list">
+                            <li>Mengalami kebingungan pemilihan peminatan (stream) saat menjelang magang sehingga butuh referensi cepat untuk pengambilan keputusan akademik</li>
+                            <li>Keterbatasan akses silabus dan roadmap kuliah per semester</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">Latar Belakang & Motivasi</h3>
+                <div class="motivation-content">
+                    <p>Saat ini chatbot terutama yg sudah berbasis API belum begitu populer di dunia akademik sehingga sekiranya bisa dikembangkan secara konsisten untuk menjawab pertanyaan kampus secara adaptif. Dari pengalaman magang terakhir, saya tertarik untuk meneliti:</p>
+                    <ul class="feature-list">
+                        <li>Konsistensi jawaban dari chatbot saat Knowledge Base berubah secara cepat (misalnya perubahan dosen pengampu atau info UKT terbaru)</li>
+                        <li>Performa sistem training terhadap Knowledge Base dan tone (gaya bahasa)</li>
+                        <li>Batasan chatbot dalam menjawab agar tidak bersifat "halu" atau menyesatkan (Basis API mengharuskan limitasi yang jelas, namun berbeda penerapan pada setiap botnya)</li>
+                        <li>Durasi dan metode training agar chatbot mampu merespon dengan tone yang tepat, memahami konteks, dan relevan secara isi</li>
+                    </ul>
+                    <p style="margin-top: 25px; font-weight: 600; color: #f093fb;">→ Fokus utama bukan sekadar membangun chatbot, tetapi membuktikan seberapa efektif sistem bisa beradaptasi dengan perubahan informasi kampus yang cepat.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">Teknologi yang Digunakan (Stack)</h3>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <div class="tech-label">Backend</div>
+                        <div class="tech-value">Python + FastAPI</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-label">Database</div>
+                        <div class="tech-value">PostgreSQL</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-label">Deployment</div>
+                        <div class="tech-value">WhatsApp (via Meta API) & Website PromedUI.com (embed iframe)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">Minimum Viable Product (MVP)</h3>
+                <div class="mvp-grid">
+                    <div class="mvp-card">
+                        <div class="mvp-title">Personalized Responses</div>
+                        <p>Berbasis intent & entity detection</p>
+                    </div>
+                    <div class="mvp-card">
+                        <div class="mvp-title">Knowledge Base Statis</div>
+                        <p>UKT, kurikulum, dosen, stream</p>
+                    </div>
+                    <div class="mvp-card">
+                        <div class="mvp-title">Admin Dashboard</div>
+                        <p>Analisa pertanyaan terpopuler & update KB manual</p>
+                    </div>
+                    <div class="mvp-card">
+                        <div class="mvp-title">Sentiment Detection</div>
+                        <p>Khusus untuk respons netral terhadap curhatan, tanpa diagnosis atau opini</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">Tantangan</h3>
+                <div class="challenges-list">
+                    <div class="challenge-item">
+                        <strong>Ketersediaan Data:</strong> Ketersediaan data lengkap mengenai promed untuk Knowledge Base pasif: akreditasi, Kalender akademik, Gelar & sertifikasi setelah lulus, Mata kuliah & kurikulum, Profil dosen atau setidaknya list semua dosen yg mengajar apa, dan silabus kasar/roadmap.
+                    </div>
+                    <div class="challenge-item">
+                        <strong>Dukungan Teknis:</strong> Dukungan rekan diskusi teknis yang lebih paham mengenai Chatbot dalam pengembangan dan pengujian
+                    </div>
+                    <div class="challenge-item">
+                        <strong>Waktu Pengujian:</strong> Waktu pengujian terbatas untuk iterasi real-world
+                    </div>
+                    <div class="challenge-item">
+                        <strong>Dana:</strong> Dana (ini tantangan selalu)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-item
